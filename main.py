@@ -152,3 +152,5 @@ def main_page():
         update_ui()
 
 ui.run(title='Forza Horizon 6 Cars', port=8080, dark=True)
+
+# Reload trigger
