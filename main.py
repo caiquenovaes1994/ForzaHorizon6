@@ -1,9 +1,12 @@
 # Auto-reload trigger for removing duplicates
-from nicegui import ui
+from nicegui import ui, app
 import json
 import os
 
 DATA_FILE = os.path.join('data', 'cars.json')
+
+# Serve static assets
+app.add_static_files('/assets', 'assets')
 
 def load_data():
     if os.path.exists(DATA_FILE):
@@ -35,12 +38,9 @@ def main_page():
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
             .forza-header {
-                background: linear-gradient(90deg, #e0005a 0%, #ff007f 100%);
                 padding: 20px;
                 text-align: center;
-                border-radius: 8px;
                 margin-bottom: 20px;
-                box-shadow: 0 4px 15px rgba(224, 0, 90, 0.4);
             }
             .car-card {
                 background-color: #1a1a1a;
@@ -68,8 +68,9 @@ def main_page():
 
     with ui.column().classes('w-full max-w-4xl mx-auto p-4'):
         # Header
-        with ui.element('div').classes('w-full forza-header'):
-            ui.label('FORZA HORIZON 6 CAR MANAGER').classes('text-3xl font-bold tracking-wider text-white')
+        with ui.element('div').classes('w-full forza-header flex flex-col items-center justify-center'):
+            ui.image('/assets/Forza_Horizon_logo.svg').style('width: 300px; max-width: 100%; margin: 0 auto;')
+            ui.label('CAR MANAGER').classes('text-2xl font-bold tracking-widest text-white mt-2')
         
         # Controls
         with ui.row().classes('w-full items-center mb-4 q-gutter-md p-4 bg-gray-900 rounded-lg border border-gray-800'):
