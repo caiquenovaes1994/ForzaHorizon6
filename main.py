@@ -24,6 +24,25 @@ cars_data = load_data()
 brands = sorted(list(set(car['make'] for car in cars_data)))
 brands.insert(0, 'All Brands')
 
+def get_class_style(class_pi):
+    text = class_pi.upper()
+    if ' X' in text or text.startswith('X'):
+        return 'background-color: #55a33a; color: white;' # Green
+    elif 'S2' in text:
+        return 'background-color: #1a4fba; color: white;' # Blue
+    elif 'S1' in text:
+        return 'background-color: #8327a3; color: white;' # Purple
+    elif ' A' in text or text.startswith('A'):
+        return 'background-color: #d12222; color: white;' # Red
+    elif ' B' in text or text.startswith('B'):
+        return 'background-color: #d66418; color: white;' # Orange
+    elif ' C' in text or text.startswith('C'):
+        return 'background-color: #d6ba18; color: black;' # Yellow
+    elif ' D' in text or text.startswith('D'):
+        return 'background-color: #27a3a3; color: white;' # Cyan
+    return 'background-color: #333333; color: white;'
+
+
 @ui.page('/')
 def main_page():
     # Set dark mode
@@ -127,7 +146,12 @@ def main_page():
                 for car in filtered_cars:
                     with ui.row().classes('car-card w-full items-center justify-between flex-nowrap'):
                         with ui.column().classes('flex-1 min-w-0 pr-4'):
-                            ui.label(car['make']).classes('text-sm text-pink-400 font-bold uppercase tracking-wide')
+                            with ui.row().classes('items-center gap-2 mb-1'):
+                                ui.label(car['make']).classes('text-sm text-pink-400 font-bold uppercase tracking-wide')
+                                if car.get('class_pi'):
+                                    class_style = get_class_style(car['class_pi'])
+                                    display_text = car['class_pi'].replace(' ', ' | ')
+                                    ui.label(display_text).classes('text-xs px-2 py-0.5 rounded font-mono font-bold shadow-sm').style(class_style)
                             ui.label(car['car_name']).classes('text-xl font-semibold break-words whitespace-normal')
                         
                         with ui.row().classes('q-gutter-md shrink-0 flex-nowrap'):
@@ -152,5 +176,11 @@ def main_page():
         update_ui()
 
 ui.run(title='Forza Horizon 6 Cars', port=8080, dark=True)
+
+# Reload trigger
+
+# Reload trigger
+
+# Reload trigger
 
 # Reload trigger

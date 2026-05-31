@@ -31,13 +31,15 @@ def scrape_cars():
     scraped_cars = []
     for row in rows:
         cols = row.find_all('td')
-        if len(cols) >= 2:
+        if len(cols) >= 4:
             make = cols[0].text.strip()
             car_name = cols[1].text.strip()
+            class_pi = cols[3].text.strip()
             
             scraped_cars.append({
                 'make': make,
                 'car_name': car_name,
+                'class_pi': class_pi,
                 'adquirido': False,
                 'capturado': False
             })
