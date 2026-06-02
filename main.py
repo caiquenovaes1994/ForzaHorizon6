@@ -24,6 +24,21 @@ cars_data = load_data()
 brands = sorted(list(set(car['make'] for car in cars_data)))
 brands.insert(0, 'All Brands')
 
+def get_class_name(class_pi):
+    if not class_pi:
+        return 'Unknown'
+    text = class_pi.upper()
+    if ' X' in text or text.startswith('X'): return 'X'
+    if 'S2' in text: return 'S2'
+    if 'S1' in text: return 'S1'
+    if ' A' in text or text.startswith('A'): return 'A'
+    if ' B' in text or text.startswith('B'): return 'B'
+    if ' C' in text or text.startswith('C'): return 'C'
+    if ' D' in text or text.startswith('D'): return 'D'
+    return 'Unknown'
+
+car_classes = ['All Classes', 'D', 'C', 'B', 'A', 'S1', 'S2', 'X']
+
 def get_class_style(class_pi):
     text = class_pi.upper()
     if ' X' in text or text.startswith('X'):
@@ -93,8 +108,13 @@ def main_page():
         
         # Controls
         with ui.row().classes('w-full items-center mb-4 q-gutter-md p-4 bg-gray-900 rounded-lg border border-gray-800'):
-            ui.label('Filter by Brand:').classes('text-lg font-semibold')
-            brand_select = ui.select(brands, value='All Brands').classes('w-64 bg-black text-white')
+            with ui.column().classes('-mt-2'):
+                ui.label('Marca:').classes('text-sm font-semibold text-gray-400 mb-[-8px]')
+                brand_select = ui.select(brands, value='All Brands').classes('w-56 bg-black text-white')
+                
+            with ui.column().classes('ml-2 -mt-2'):
+                ui.label('Classe:').classes('text-sm font-semibold text-gray-400 mb-[-8px]')
+                class_select = ui.select(car_classes, value='All Classes').classes('w-32 bg-black text-white')
             
             with ui.column().classes('ml-4 -mt-2'):
                 ui.label('Adquirido:').classes('text-sm font-semibold text-gray-400 mb-[-8px]')
@@ -117,26 +137,36 @@ def main_page():
                 adquiridos = sum(1 for c in cars_data if c.get('adquirido', False))
                 capturados = sum(1 for c in cars_data if c.get('capturado', False))
                 total = len(cars_data)
-                stats_label.set_text(f"Adquiridos: {adquiridos}/{total} | Capturados: {capturados}/{total}")
+                pct_adq = (adquiridos / total * 100) if total > 0 else 0
+                pct_cap = (capturados / total * 100) if total > 0 else 0
+                stats_label.set_text(f"Adquiridos: {adquiridos}/{total} ({pct_adq:.1f}%) | Capturados: {capturados}/{total} ({pct_cap:.1f}%)")
 
             update_stats()
+
+        with ui.row().classes('w-full justify-end mb-2'):
+            filter_count_label = ui.label('').classes('text-sm font-semibold tracking-wide').style('color: #e0005a;')
 
         # Car List container
         car_container = ui.column().classes('w-full')
         
         def update_ui():
             car_container.clear()
-            filter_val = brand_select.value
+            brand_val = brand_select.value
+            class_val = class_select.value
             # Filter cars
             filtered_cars = cars_data
-            if filter_val != 'All Brands':
-                filtered_cars = [c for c in filtered_cars if c['make'] == filter_val]
+            if brand_val != 'All Brands':
+                filtered_cars = [c for c in filtered_cars if c['make'] == brand_val]
+            if class_val != 'All Classes':
+                filtered_cars = [c for c in filtered_cars if get_class_name(c.get('class_pi')) == class_val]
                 
             filtered_cars = [c for c in filtered_cars if 
                              ((c.get('adquirido', False) and show_adq_sim.value) or 
                               (not c.get('adquirido', False) and show_adq_nao.value)) and
                              ((c.get('capturado', False) and show_cap_sim.value) or 
                               (not c.get('capturado', False) and show_cap_nao.value))]
+            
+            filter_count_label.set_text(f"Exibindo {len(filtered_cars)} de {len(cars_data)} carros")
                 
             with car_container:
                 if not filtered_cars:
@@ -169,6 +199,7 @@ def main_page():
                             ui.checkbox('Capturado', value=car.get('capturado', False), on_change=toggle_capturado).classes('text-lg')
         
         brand_select.on_value_change(update_ui)
+        class_select.on_value_change(update_ui)
         show_adq_sim.on_value_change(update_ui)
         show_adq_nao.on_value_change(update_ui)
         show_cap_sim.on_value_change(update_ui)
