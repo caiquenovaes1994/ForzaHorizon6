@@ -29,6 +29,7 @@ def get_class_name(class_pi):
         return 'Unknown'
     text = class_pi.upper()
     if ' X' in text or text.startswith('X'): return 'X'
+    if ' R' in text or text.startswith('R'): return 'R'
     if 'S2' in text: return 'S2'
     if 'S1' in text: return 'S1'
     if ' A' in text or text.startswith('A'): return 'A'
@@ -37,12 +38,14 @@ def get_class_name(class_pi):
     if ' D' in text or text.startswith('D'): return 'D'
     return 'Unknown'
 
-car_classes = ['All Classes', 'D', 'C', 'B', 'A', 'S1', 'S2', 'X']
+car_classes = ['All Classes', 'D', 'C', 'B', 'A', 'S1', 'S2', 'R', 'X']
 
 def get_class_style(class_pi):
     text = class_pi.upper()
     if ' X' in text or text.startswith('X'):
         return 'background-color: #55a33a; color: white;' # Green
+    elif ' R' in text or text.startswith('R'):
+        return 'background-color: #e0005a; color: white;' # Pink
     elif 'S2' in text:
         return 'background-color: #1a4fba; color: white;' # Blue
     elif 'S1' in text:
